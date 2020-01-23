@@ -1,3 +1,4 @@
+from util import Queue
 import random
 
 class User:
@@ -75,6 +76,12 @@ class SocialGraph:
             friendship = possible_friendships[i]
             self.add_friendship(friendship[0], friendship[1])
 
+    def get_friends(self, user_id):
+        """
+        Get all friends / edges of a user.
+        """
+        return self.friendships[user_id]
+
     def get_all_social_paths(self, user_id):
         """
         Takes a user's user_id as an argument
@@ -86,6 +93,27 @@ class SocialGraph:
         """
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        # Create an empty queue and enqueue the starting vertex ID
+        q = Queue()
+        q.enqueue([user_id])
+
+        # While the queue is not empty...
+        while q.size():
+            # Dequeue the first path
+            path = q.dequeue()
+            # Look at the last user in the path...
+            current_friend = path[-1]
+
+            # If the user has not been visited
+            if current_friend not in visited:
+                # Mark as visited and add their path
+                visited[current_friend] = path
+                # Add a path to each neighbor to the queue
+                for friend in self.get_friends(current_friend):
+                    new_path = path.copy()
+                    new_path.append(friend)
+                    q.enqueue(new_path)
+
         return visited
 
 
